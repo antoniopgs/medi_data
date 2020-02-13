@@ -1,5 +1,7 @@
 # ---------- DEPENDENCIES AND OTHERS ----------
 from datetime import datetime
+from zipfile import ZipFile
+import tarfile
 import random
 blockchains = []
 n = 0
@@ -31,10 +33,10 @@ class Blockchain:
         self.tail_block = None
         # Generate Unique Address:
         while True:
-            address = hash(random.randint(1, 100))
+            address = hash(random.randint(1, 10000))
             if address not in blockchains:
                 self.address = address
-                self.private_key = hash(random.randint(1,100))
+                self.private_key = hash(random.randint(1,10000))
                 print(f"""----- PERSONAL DATA -----
 Your Address: {self.address}
 Your Private Key: {self.private_key}
@@ -48,7 +50,31 @@ WARNING: This data will never be shown again! Store it safely.
         if address != self.address or private_key != self.private_key:
             print("Invalid Credentials.")
         else:
-            data = input("Insert Medical Data: ")
+
+            # Choose Format:
+            valid_format = False
+            while not valid_format:
+                format_number = input("""----- CHOOSE FORMAT -----
+1 - ZIP
+2 - TAR
+
+Insert Format Number: """)
+                if format_number == "1":
+                    file_format = "ZIP"
+                    valid_format = True
+                elif format_number == "2":
+                    file_format = "TAR"
+                    valid_format = True
+                else:
+                    print("Invalid Format Number.\n")
+
+            # Get Data:
+            if file_format == "ZIP":
+                data = ZipFile("file.zip", 'r')
+            elif file_format == "TAR":
+                tarfile.open("file.tar.gz", 'r')
+
+            # Append Block with Data to Blockchain:
             if not self.tail_block:
                 new_block = Block(data)
             else:
